@@ -8,35 +8,50 @@
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
     ctx.translate(250, 250); // Translating to the center of the canvas
+    var extraSystems = []; // An array of pendulum systems that aren't controlled by dat.gui
 
     var loop = function() {
         ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
         pendulums.logic();
+        for (var i = 0; i < extraSystems.length; i++) {
+            extraSystems[i].logic();
+        }
         requestAnimationFrame(loop);
     };
 
-    var drawCircle = function(circle) {
+    var drawCircle = function(circle, controlled) {
+        // If you're drawing the controlled pendulum, draw it a different color
         ctx.beginPath();
         ctx.arc(circle.x, circle.y, circle.mass, 0, 2 * Math.PI, false);
+        ctx.fillStyle = controlled ? 'red' : 'black';
         ctx.fill();
         ctx.closePath();
     };
-    var drawLine = function(from, to) {
+    var drawLine = function(from, to, controlled) {
+        // If you're drawing the controlled pendulum's line, draw it a different color
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
+        ctx.strokeStyle = controlled ? 'red' : 'black';
         ctx.stroke();
         ctx.closePath();
     };
 
+    var range = function(from, to) {
+        // Return a random value between the given range
+        return from + Math.random() * (to - from);
+    };
+
     var center = {x: 0, y: 0}; // Center after translating the ctx
-    var System = function() {
-        this.m1 = 5;
-        this.m2 = 5;
-        this.l1 = 50;
-        this.l2 = 30;
-        this.theta1 = 120;
-        this.theta2 = 180;
+    var System = function(controlled) {
+        this.controlled = controlled;
+
+        this.m1 = range(1, 20);
+        this.m2 = range(1, 20);
+        this.l1 = range(10, 100);
+        this.l2 = range(10, 100);
+        this.theta1 = range(0, 360);
+        this.theta2 = range(0, 360);
         var dTheta1 = 0;
         var dTheta2 = 0;
         var d2Theta1 = 0;
@@ -75,6 +90,10 @@
             else {
                 time = 0;
             }
+        };
+
+        this.addSystem = function() {
+            extraSystems.push(new System());
         };
 
         this.logic = function() {
@@ -117,14 +136,14 @@
             pen2.mass = m2;
 
             // Draw ALL THE THINGS!
-            drawCircle(pen1);
-            drawCircle(pen2);
-            drawLine(center, pen1);
-            drawLine(pen1, pen2);
+            drawCircle(pen1, this.controlled);
+            drawCircle(pen2, this.controlled);
+            drawLine(center, pen1, this.controlled);
+            drawLine(pen1, pen2, this.controlled);
         };
     };
 
-    var pendulums = new System();
+    var pendulums = new System(true);
     window.onload = function() {
         var gui = new dat.GUI();
         gui.add(pendulums, 'm1', 1, 20).listen();
@@ -135,6 +154,7 @@
         gui.add(pendulums, 'theta2', 0, 360).listen();
         gui.add(pendulums, 'reset');
         gui.add(pendulums, 'toggle');
+        gui.add(pendulums, 'addSystem');
     };
 
 
