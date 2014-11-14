@@ -33,10 +33,10 @@
     var System = function() {
         this.m1 = 5;
         this.m2 = 5;
-        this.l1 = 30;
-        this.l2 = 40;
-        this.theta1 = 0;
-        this.theta2 = Math.PI / 2;
+        this.l1 = 50;
+        this.l2 = 30;
+        this.theta1 = 120;
+        this.theta2 = 180;
         var dTheta1 = 0;
         var dTheta2 = 0;
         var d2Theta1 = 0;
