@@ -68,6 +68,15 @@
             theta2 = 0;
         };
 
+        this.toggle = function() {
+            if (time === 0) {
+                time = 0.05;
+            }
+            else {
+                time = 0;
+            }
+        };
+
         this.logic = function() {
             // Aliasing properties
             var m1 = this.m1;
@@ -125,6 +134,7 @@
         gui.add(pendulums, 'theta1', 0, 360).listen();
         gui.add(pendulums, 'theta2', 0, 360).listen();
         gui.add(pendulums, 'reset');
+        gui.add(pendulums, 'toggle');
     };
 
 
