@@ -6,12 +6,16 @@
 
 (function() {
     var canvas = document.getElementById('canvas');
+    var bg = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
+    var bgCtx = bg.getContext('2d');
     ctx.translate(250, 250); // Translating to the center of the canvas
     var extraSystems = []; // An array of pendulum systems that aren't controlled by dat.gui
 
     var loop = function() {
+        ctx.fillStyle = 'black';
         ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        bgCtx.fillRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
         pendulums.logic();
         for (var i = 0; i < extraSystems.length; i++) {
             extraSystems[i].logic();
@@ -23,7 +27,7 @@
         // If you're drawing the controlled pendulum, draw it a different color
         ctx.beginPath();
         ctx.arc(circle.x, circle.y, circle.mass, 0, 2 * Math.PI, false);
-        ctx.fillStyle = controlled ? 'red' : 'black';
+        ctx.fillStyle = controlled ? '#EB6841' : 'white';
         ctx.fill();
         ctx.closePath();
     };
@@ -32,9 +36,14 @@
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
-        ctx.strokeStyle = controlled ? 'red' : 'black';
+        ctx.strokeStyle = controlled ? '#6A4A3C' : 'white';
         ctx.stroke();
         ctx.closePath();
+    };
+    var drawTrace = function(trace, pen, controlled) {
+        trace.lineTo(pen.x, pen.y);
+        ctx.strokeStyle = controlled ? '#EDC951' : 'white';
+        ctx.stroke(trace);
     };
 
     var range = function(from, to) {
@@ -44,6 +53,7 @@
 
     var center = {x: 0, y: 0}; // Center after translating the ctx
     var System = function(controlled) {
+        var prev = {};
         this.controlled = controlled;
 
         this.m1 = range(1, 20);
@@ -58,7 +68,7 @@
         var d2Theta2 = 0;
 
         var G = this.gravity = 9.8;
-        var time = 0.075;
+        this.time = 0.075;
 
         var pen1 = window.pen1 = {};
         var pen2 = window.pen2 = {};
@@ -66,6 +76,18 @@
 
         var sin = Math.sin;
         var cos = Math.cos;
+
+        var theta1 = this.theta1 * Math.PI / 180;
+        var theta2 = this.theta2 * Math.PI / 180;
+
+        pen1.x = this.l1 * sin(theta1);
+        pen1.y = this.l1 * cos(theta1);
+
+        pen2.x = pen1.x + this.l2 * sin(theta2);
+        pen2.y = pen1.y + this.l2 * cos(theta2);
+
+        this.trace = new Path2D();
+        this.trace.moveTo(pen2.x, pen2.y);
 
 
         this.reset = function() {
@@ -84,11 +106,11 @@
         };
 
         this.toggle = function() {
-            if (time === 0) {
-                time = 0.05;
+            if (this.time === 0) {
+                this.time = 0.05;
             }
             else {
-                time = 0;
+                this.time = 0;
             }
         };
 
@@ -109,10 +131,10 @@
 
             d2Theta1 = (G * (sin(theta2) * cos(theta1 - theta2) - mu * sin(theta1)) - (l2 * dTheta2 * dTheta2 + l1 * dTheta1 * dTheta1 * cos(theta1 - theta2)) * sin(theta1 - theta2)) / (l1 * (mu - cos(theta1 - theta2) * cos(theta1 - theta2)));
             d2Theta2 = (G * mu * (sin(theta1) * cos(theta1 - theta2) - sin(theta2)) + (mu * l1 * dTheta1 * dTheta1 + l2 * dTheta2 * dTheta2 * cos(theta1 - theta2)) * sin(theta1 - theta2)) / (l2 * (mu - cos(theta1 - theta2) * cos(theta1 - theta2)));
-            dTheta1 += d2Theta1 * time;
-            dTheta2 += d2Theta2 * time;
-            theta1 += dTheta1 * time;
-            theta2 += dTheta2 * time;
+            dTheta1 += d2Theta1 * this.time;
+            dTheta2 += d2Theta2 * this.time;
+            theta1 += dTheta1 * this.time;
+            theta2 += dTheta2 * this.time;
 
             this.theta1 = theta1 * 180 / Math.PI;
             this.theta2 = theta2 * 180 / Math.PI;
@@ -140,6 +162,7 @@
             drawCircle(pen2, this.controlled);
             drawLine(center, pen1, this.controlled);
             drawLine(pen1, pen2, this.controlled);
+            drawTrace(this.trace, pen2, this.controlled);
         };
     };
 
@@ -152,6 +175,7 @@
         gui.add(pendulums, 'l2', 10, 100).listen();
         gui.add(pendulums, 'theta1', 0, 360).listen();
         gui.add(pendulums, 'theta2', 0, 360).listen();
+        gui.add(pendulums, 'time', 0.001, 0.5).listen();
         gui.add(pendulums, 'reset');
         gui.add(pendulums, 'toggle');
         gui.add(pendulums, 'addSystem');
