@@ -103,6 +103,9 @@
             d2Theta2 = 0;
             theta1 = 0;
             theta2 = 0;
+            this.time = 0.075;
+            extraSystems = [];
+            this.trace = new Path2D();
         };
 
         this.toggle = function() {
