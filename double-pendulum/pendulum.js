@@ -3,6 +3,8 @@
 // http://www.myphysicslab.com/dbl_pendulum.html
 // https://en.wikipedia.org/wiki/Double_pendulum#Lagrangian
 // https://www.youtube.com/watch?v=fZKrUgm9R1o&list=PLUl4u3cNGP62esZEwffjMAsEMW_YArxYC
+// https://www.youtube.com/watch?v=q87L9R9v274
+// https://en.wikipedia.org/wiki/Euler_method
 
 (function() {
     var canvas = document.getElementById('canvas');
