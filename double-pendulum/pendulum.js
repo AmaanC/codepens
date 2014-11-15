@@ -6,16 +6,13 @@
 
 (function() {
     var canvas = document.getElementById('canvas');
-    var bg = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
-    var bgCtx = bg.getContext('2d');
     ctx.translate(250, 250); // Translating to the center of the canvas
     var extraSystems = []; // An array of pendulum systems that aren't controlled by dat.gui
 
     var loop = function() {
         ctx.fillStyle = 'black';
-        ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-        bgCtx.fillRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        ctx.fillRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
         pendulums.logic();
         for (var i = 0; i < extraSystems.length; i++) {
             extraSystems[i].logic();
