@@ -146,6 +146,11 @@
             theta1 += dTheta1 * controls.time;
             theta2 += dTheta2 * controls.time;
 
+            theta1 %= 2 * Math.PI;
+            theta2 %= 2 * Math.PI;
+            dTheta1 %= 2 * Math.PI;
+            dTheta2 %= 2 * Math.PI;
+
             this.theta1 = theta1 * 180 / Math.PI;
             this.theta2 = theta2 * 180 / Math.PI;
 
