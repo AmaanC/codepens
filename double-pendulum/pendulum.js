@@ -54,6 +54,7 @@
 
     var center = {x: 0, y: 0}; // Center after translating the ctx
 
+    var tempTime;
     var controls = {
         time: 0.075,
         reset: function() {
@@ -63,9 +64,10 @@
         },
         toggle: function() {
             if (controls.time === 0) {
-                controls.time = 0.05;
+                controls.time = tempTime;
             }
             else {
+                tempTime = controls.time;
                 controls.time = 0;
             }
         },
@@ -190,19 +192,24 @@
     var pendulums = new System(true);
     window.onload = function() {
         var gui = new dat.GUI();
-        gui.add(pendulums, 'm1', 1, 20).listen();
-        gui.add(pendulums, 'm2', 1, 20).listen();
-        gui.add(pendulums, 'l1', 10, 100).listen();
-        gui.add(pendulums, 'l2', 10, 100).listen();
-        gui.add(pendulums, 'theta1', 0, 360).listen();
-        gui.add(pendulums, 'theta2', 0, 360).listen();
-        gui.addColor(pendulums, 'color');
-        gui.add(controls, 'showSystem');
-        gui.add(controls, 'showTrace');
-        gui.add(controls, 'time', 0.001, 0.5).listen();
-        gui.add(controls, 'toggle');
-        gui.add(controls, 'reset');
-        gui.add(controls, 'addSystem');
+        var penGui = gui.addFolder('Main pendulum');
+        var genControls = gui.addFolder('General controls');
+        penGui.add(pendulums, 'm1', 1, 20).listen();
+        penGui.add(pendulums, 'm2', 1, 20).listen();
+        penGui.add(pendulums, 'l1', 10, 100).listen();
+        penGui.add(pendulums, 'l2', 10, 100).listen();
+        penGui.add(pendulums, 'theta1', 0, 360).listen();
+        penGui.add(pendulums, 'theta2', 0, 360).listen();
+        penGui.addColor(pendulums, 'color');
+        genControls.add(controls, 'showSystem');
+        genControls.add(controls, 'showTrace');
+        genControls.add(controls, 'time', 0.001, 0.5).listen();
+        genControls.add(controls, 'toggle');
+        genControls.add(controls, 'reset');
+        genControls.add(controls, 'addSystem');
+
+        penGui.open();
+        genControls.open();
     };
 
 
