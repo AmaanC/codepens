@@ -2,3 +2,7 @@ canvas {
     border: 1px solid black;
     position: absolute;
 }
+
+body {
+    background-color: black;
+}
