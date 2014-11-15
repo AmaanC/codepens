@@ -40,10 +40,12 @@
         ctx.stroke();
         ctx.closePath();
     };
-    var drawTrace = function(trace, pen, controlled) {
+    var drawTrace = function(trace, pen, controlled, show) {
         trace.lineTo(pen.x, pen.y);
         ctx.strokeStyle = controlled ? '#EDC951' : 'white';
-        ctx.stroke(trace);
+        if (show) {
+            ctx.stroke(trace);
+        }
     };
 
     var range = function(from, to) {
@@ -55,6 +57,8 @@
     var System = function(controlled) {
         var prev = {};
         this.controlled = controlled;
+        this.showSystem = true;
+        this.showTrace = true;
 
         this.m1 = range(1, 20);
         this.m2 = range(1, 20);
@@ -91,12 +95,12 @@
 
 
         this.reset = function() {
-            this.m1 = 5;
-            this.m2 = 5;
-            this.l1 = 30;
-            this.l2 = 40;
-            this.theta1 = 0;
-            this.theta2 = Math.PI / 2;
+            this.m1 = range(1, 20);
+            this.m2 = range(1, 20);
+            this.l1 = range(10, 100);
+            this.l2 = range(10, 100);
+            this.theta1 = range(0, 360);
+            this.theta2 = range(0, 360);
             dTheta1 = 0;
             dTheta2 = 0;
             d2Theta1 = 0;
@@ -161,11 +165,15 @@
             pen2.mass = m2;
 
             // Draw ALL THE THINGS!
-            drawCircle(pen1, this.controlled);
-            drawCircle(pen2, this.controlled);
-            drawLine(center, pen1, this.controlled);
-            drawLine(pen1, pen2, this.controlled);
-            drawTrace(this.trace, pen2, this.controlled);
+            if (pendulums.showSystem) {
+                drawCircle(pen1, this.controlled);
+                drawCircle(pen2, this.controlled);
+                drawLine(center, pen1, this.controlled);
+                drawLine(pen1, pen2, this.controlled);
+            }
+
+            drawTrace(this.trace, pen2, this.controlled, pendulums.showTrace); // Got to continue tracing it, but just not actually draw it
+
         };
     };
 
@@ -179,6 +187,8 @@
         gui.add(pendulums, 'theta1', 0, 360).listen();
         gui.add(pendulums, 'theta2', 0, 360).listen();
         gui.add(pendulums, 'time', 0.001, 0.5).listen();
+        gui.add(pendulums, 'showSystem');
+        gui.add(pendulums, 'showTrace');
         gui.add(pendulums, 'reset');
         gui.add(pendulums, 'toggle');
         gui.add(pendulums, 'addSystem');
