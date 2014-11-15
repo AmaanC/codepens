@@ -58,10 +58,9 @@
     var controls = {
         time: 0.075,
         reset: function() {
-            pendulums = new System(true);
-            controls.time = 0.075;
+            pendulums.reset();
             extraSystems = [];
-            this.trace = new Path2D();
+            controls.time = 0.075;
         },
         toggle: function() {
             if (controls.time === 0) {
@@ -116,6 +115,21 @@
 
         this.trace = new Path2D();
         this.trace.moveTo(pen2.x, pen2.y);
+
+        this.reset = function() {
+            this.m1 = range(1, 20);
+            this.m2 = range(1, 20);
+            this.l1 = range(10, 100);
+            this.l2 = range(10, 100);
+            this.theta1 = range(0, 360);
+            this.theta2 = range(0, 360);
+            dTheta1 = 0;
+            dTheta2 = 0;
+            d2Theta1 = 0;
+            d2Theta2 = 0;
+            this.trace = new Path2D();
+            this.color = 'rgb(' + ~~range(0, 255) + ',' + ~~range(0, 255) + ',' + ~~range(0, 255) + ')';
+        };
 
         this.logic = function() {
             // Aliasing properties
