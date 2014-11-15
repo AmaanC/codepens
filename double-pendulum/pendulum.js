@@ -200,7 +200,7 @@
         penGui.add(pendulums, 'l2', 10, 100).listen();
         penGui.add(pendulums, 'theta1', 0, 360).listen();
         penGui.add(pendulums, 'theta2', 0, 360).listen();
-        penGui.addColor(pendulums, 'color');
+        penGui.addColor(pendulums, 'color').listen();
         genControls.add(controls, 'showSystem');
         genControls.add(controls, 'showTrace');
         genControls.add(controls, 'time', 0.001, 0.5).listen();
