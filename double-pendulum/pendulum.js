@@ -7,7 +7,7 @@
 (function() {
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
-    ctx.translate(250, 250); // Translating to the center of the canvas
+    ctx.translate(canvas.width / 2, canvas.height / 2); // Translating to the center of the canvas
     var extraSystems = []; // An array of pendulum systems that aren't controlled by dat.gui
 
     var loop = function() {
