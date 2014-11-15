@@ -23,26 +23,26 @@
         requestAnimationFrame(loop);
     };
 
-    var drawCircle = function(circle, controlled) {
+    var drawCircle = function(circle, color) {
         // If you're drawing the controlled pendulum, draw it a different color
         ctx.beginPath();
         ctx.arc(circle.x, circle.y, circle.mass, 0, 2 * Math.PI, false);
-        ctx.fillStyle = controlled ? '#EB6841' : 'white';
+        ctx.fillStyle = color;
         ctx.fill();
         ctx.closePath();
     };
-    var drawLine = function(from, to, controlled) {
+    var drawLine = function(from, to, color) {
         // If you're drawing the controlled pendulum's line, draw it a different color
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
-        ctx.strokeStyle = controlled ? '#6A4A3C' : 'white';
+        ctx.strokeStyle = color;
         ctx.stroke();
         ctx.closePath();
     };
-    var drawTrace = function(trace, pen, controlled, show) {
+    var drawTrace = function(trace, pen, color, show) {
         trace.lineTo(pen.x, pen.y);
-        ctx.strokeStyle = controlled ? '#EDC951' : 'white';
+        ctx.strokeStyle = color;
         if (show) {
             ctx.stroke(trace);
         }
@@ -54,11 +54,36 @@
     };
 
     var center = {x: 0, y: 0}; // Center after translating the ctx
+
+    var controls = {
+        time: 0.075,
+        reset: function() {
+            pendulums = new System(true);
+            controls.time = 0.075;
+            extraSystems = [];
+            this.trace = new Path2D();
+        },
+        toggle: function() {
+            if (controls.time === 0) {
+                controls.time = 0.05;
+            }
+            else {
+                controls.time = 0;
+            }
+        },
+        addSystem: function() {
+            extraSystems.push(new System());
+        },
+        showSystem: true,
+        showTrace: true
+    };
+
     var System = function(controlled) {
         var prev = {};
         this.controlled = controlled;
-        this.showSystem = true;
-        this.showTrace = true;
+
+        this.color = 'rgb(' + ~~range(0, 255) + ',' + ~~range(0, 255) + ',' + ~~range(0, 255) + ')';
+        console.log(this.color);
 
         this.m1 = range(1, 20);
         this.m2 = range(1, 20);
@@ -72,7 +97,6 @@
         var d2Theta2 = 0;
 
         var G = this.gravity = 9.8;
-        this.time = 0.075;
 
         var pen1 = window.pen1 = {};
         var pen2 = window.pen2 = {};
@@ -93,38 +117,6 @@
         this.trace = new Path2D();
         this.trace.moveTo(pen2.x, pen2.y);
 
-
-        this.reset = function() {
-            this.m1 = range(1, 20);
-            this.m2 = range(1, 20);
-            this.l1 = range(10, 100);
-            this.l2 = range(10, 100);
-            this.theta1 = range(0, 360);
-            this.theta2 = range(0, 360);
-            dTheta1 = 0;
-            dTheta2 = 0;
-            d2Theta1 = 0;
-            d2Theta2 = 0;
-            theta1 = 0;
-            theta2 = 0;
-            this.time = 0.075;
-            extraSystems = [];
-            this.trace = new Path2D();
-        };
-
-        this.toggle = function() {
-            if (this.time === 0) {
-                this.time = 0.05;
-            }
-            else {
-                this.time = 0;
-            }
-        };
-
-        this.addSystem = function() {
-            extraSystems.push(new System());
-        };
-
         this.logic = function() {
             // Aliasing properties
             var m1 = this.m1;
@@ -138,10 +130,10 @@
 
             d2Theta1 = (G * (sin(theta2) * cos(theta1 - theta2) - mu * sin(theta1)) - (l2 * dTheta2 * dTheta2 + l1 * dTheta1 * dTheta1 * cos(theta1 - theta2)) * sin(theta1 - theta2)) / (l1 * (mu - cos(theta1 - theta2) * cos(theta1 - theta2)));
             d2Theta2 = (G * mu * (sin(theta1) * cos(theta1 - theta2) - sin(theta2)) + (mu * l1 * dTheta1 * dTheta1 + l2 * dTheta2 * dTheta2 * cos(theta1 - theta2)) * sin(theta1 - theta2)) / (l2 * (mu - cos(theta1 - theta2) * cos(theta1 - theta2)));
-            dTheta1 += d2Theta1 * this.time;
-            dTheta2 += d2Theta2 * this.time;
-            theta1 += dTheta1 * this.time;
-            theta2 += dTheta2 * this.time;
+            dTheta1 += d2Theta1 * controls.time;
+            dTheta2 += d2Theta2 * controls.time;
+            theta1 += dTheta1 * controls.time;
+            theta2 += dTheta2 * controls.time;
 
             this.theta1 = theta1 * 180 / Math.PI;
             this.theta2 = theta2 * 180 / Math.PI;
@@ -165,14 +157,14 @@
             pen2.mass = m2;
 
             // Draw ALL THE THINGS!
-            if (pendulums.showSystem) {
-                drawCircle(pen1, this.controlled);
-                drawCircle(pen2, this.controlled);
-                drawLine(center, pen1, this.controlled);
-                drawLine(pen1, pen2, this.controlled);
+            if (controls.showSystem) {
+                drawCircle(pen1, this.color);
+                drawCircle(pen2, this.color);
+                drawLine(center, pen1, this.color);
+                drawLine(pen1, pen2, this.color);
             }
 
-            drawTrace(this.trace, pen2, this.controlled, pendulums.showTrace); // Got to continue tracing it, but just not actually draw it
+            drawTrace(this.trace, pen2, this.color, controls.showTrace); // Got to continue tracing it, but just not actually draw it
 
         };
     };
@@ -186,12 +178,13 @@
         gui.add(pendulums, 'l2', 10, 100).listen();
         gui.add(pendulums, 'theta1', 0, 360).listen();
         gui.add(pendulums, 'theta2', 0, 360).listen();
-        gui.add(pendulums, 'time', 0.001, 0.5).listen();
-        gui.add(pendulums, 'showSystem');
-        gui.add(pendulums, 'showTrace');
-        gui.add(pendulums, 'reset');
-        gui.add(pendulums, 'toggle');
-        gui.add(pendulums, 'addSystem');
+        gui.addColor(pendulums, 'color');
+        gui.add(controls, 'showSystem');
+        gui.add(controls, 'showTrace');
+        gui.add(controls, 'time', 0.001, 0.5).listen();
+        gui.add(controls, 'toggle');
+        gui.add(controls, 'reset');
+        gui.add(controls, 'addSystem');
     };
 
 
