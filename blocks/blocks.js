@@ -8,18 +8,16 @@
 
     var blockSize = 50;
     var smallestSize = 30;
-    var step = 2; // Spped at which it'll pulsate
     var lightBlocks = [];
     var darkBlocks = [];
     var lightColor = '#dcdcd2';
     var darkColor = '#262626';
-    var blur = 0.5;
+    var blur = 0.3;
     var alpha = 1 / blur;
 
     var lightMode = true;
     var justFlipped = true;
     var shouldPulse = false;
-    var paused = false;
 
     var rows = 8;
     var columns = 8;
@@ -38,28 +36,29 @@
         obj.centerY = centerY;
         obj.size = blockSize; // This value will be changed in the pulsate function
         obj.color = color;
-        obj.pulse = 0; // Used in the pulsate function
         obj.shrinking = 1; // Changed to -1 when it's growing
         obj.pulsing = false;
         obj.trigger = function() {
+            obj.shrinking = 1;
             obj.done = false;
             obj.pulsing = true;
         }
         obj.pulsate = function() {
+            // console.log('Pulsating', obj.size, obj.shrinking);
             obj.pulsing = true;
-            obj.size -= obj.shrinking * step * Math.sin(obj.pulse);
-            obj.pulse += Math.PI / 180;
+            obj.size -= obj.shrinking * 2;
             if (obj.size < smallestSize) {
+                // console.log('At smallest');
                 obj.shrinking = 0;
                 setTimeout(function() {
                     obj.shrinking = -1;
                 }, 200);
             }
-            else if (obj.size >  blockSize) {
+            else if (obj.size > blockSize) {
+                // console.log('Done', obj.shrinking, obj.size);
                 obj.done = true;
                 obj.size = blockSize;
                 obj.pulsing = false;
-                obj.pulse = 0;
                 obj.shrinking = 1;
             }
         };
@@ -104,47 +103,44 @@
         // Pulsate black squares
         // Repeat with the colors reversed
 
-        if (!paused) {
-            ticks++;
+        ticks++;
 
-            ctx.fillStyle = lightMode ? 'rgba(220, 220, 210, ' + alpha + ')' : 'rgba(38, 38, 38, ' + alpha + ')';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            var elem;
+        ctx.fillStyle = lightMode ? 'rgba(220, 220, 210, ' + alpha + ')' : 'rgba(38, 38, 38, ' + alpha + ')';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        var elem;
 
-            for (var i = 0; i < lightBlocks.length; i++) {
-                elem = lightMode ? darkBlocks[i] : lightBlocks[i];
-                elem.draw();
-                if (elem.pulsing === false && elem.done !== true && shouldPulse === true && elem.centerX + elem.centerY <= triggerSum) {
-                    elem.trigger();
-                }
+        for (var i = 0; i < lightBlocks.length; i++) {
+            elem = lightMode ? darkBlocks[i] : lightBlocks[i];
+            elem.draw();
+            if (elem.pulsing === false && elem.done !== true && shouldPulse === true && elem.centerX + elem.centerY <= triggerSum) {
+                elem.trigger();
             }
+        }
 
-            if (shouldPulse === true && ticks >= 10) {
+        if (shouldPulse === true && ticks >= 10) {
+            ticks = 0;
+            triggerSum += blockSize * rows / 2;
+        }
+
+        // Stop triggering once you've triggered all blocks in the array
+        if (elem.pulsing === true) {
+            shouldPulse = false;
+        }
+
+        // If the last block in the array is not pulsing, and it hasn't already pulsed, make them pulse
+        if (elem.pulsing === false && justFlipped === true) {
+            shouldPulse = true;
+            justFlipped = false;
+        }
+        else if (elem.pulsing === false && elem.done === true && shouldPulse === false && justFlipped === false) {
+            justFlipped = true;
+            setTimeout(function() {
+                // console.log('Flipped', elem.shrinking);
                 ticks = 0;
-                triggerSum += blockSize * rows / 2;
-            }
-
-            // Stop triggering once you've triggered all blocks in the array
-            if (elem.pulsing === true) {
-                shouldPulse = false;
-            }
-
-            // If the last block in the array is not pulsing, and it hasn't already pulsed, make them pulse
-            if (elem.pulsing === false && justFlipped === true) {
-                shouldPulse = true;
-                justFlipped = false;
-            }
-            else if (elem.pulsing === false && elem.done === true && shouldPulse === false) {
-                paused = true;
-                setTimeout(function() {
-                    ticks = 0;
-                    justFlipped = true;
-                    lightMode = !lightMode;
-                    triggerSum = 0;
-                    paused = false;
-                    resetBlocks(); // Make elem.done false so they can pulse again later
-                }, 200);
-            }
+                lightMode = !lightMode;
+                triggerSum = 0;
+                resetBlocks(); // Make elem.done false so they can pulse again later
+            }, 200);
         }
 
         setTimeout(loop, 100/6);
