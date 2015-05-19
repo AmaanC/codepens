@@ -14,6 +14,7 @@
     var darkColor = '#262626';
     var blur = 0.3;
     var alpha = 1 / blur;
+    var shrinkMs = 300; // In ms, how long each square stays shrunken
 
     var lightMode = true;
     var justFlipped = true;
@@ -52,7 +53,7 @@
                 obj.shrinking = 0;
                 setTimeout(function() {
                     obj.shrinking = -1;
-                }, 200);
+                }, shrinkMs);
             }
             else if (obj.size > blockSize) {
                 // console.log('Done', obj.shrinking, obj.size);
