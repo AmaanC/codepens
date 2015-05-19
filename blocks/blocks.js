@@ -9,6 +9,15 @@
     var step = 5;
     var lightBlocks = [];
     var darkBlocks = [];
+    var lightColor = '#dcdcd2';
+    var darkColor = '#262626';
+
+    var lightMode = true;
+    var justFlipped = true;
+    var shouldPulse = false;
+
+    var rows = 2;
+    var columns = 2;
 
     var drawBlock = function(centerX, centerY, size, color) {
         ctx.fillStyle = color;
@@ -56,12 +65,12 @@
         var centerX;
         var centerY;
         // Creating the grid pattern of blocks, i being the number of rows, j being columns
-        for (var i = 0; i < 10; i++) {
-            for (var j = 0; j < 10; j += 2) {
+        for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < columns; j += 2) {
                 centerX = blockSize / 2 + blockSize * j;
                 centerY = blockSize / 2 + blockSize * i + blockSize * (j % 2);
-                light = createBlock(centerX + blockSize * (i % 2), centerY, 'green');
-                dark = createBlock(centerX + blockSize * !(i % 2), centerY, 'red');
+                light = createBlock(centerX + blockSize * (i % 2), centerY, lightColor);
+                dark = createBlock(centerX + blockSize * !(i % 2), centerY, darkColor);
                 lightBlocks.push(light);
                 darkBlocks.push(dark);
             }
@@ -75,17 +84,33 @@
         // Pulsate black squares
         // Repeat with the colors reversed
 
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = lightMode ? lightColor : darkColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         var elem;
-        for (var i = 0; i < darkBlocks.length; i++) {
-            elem = lightBlocks[i];
+
+        for (var i = 0; i < lightBlocks.length; i++) {
+            elem = lightMode ? darkBlocks[i] : lightBlocks[i];
             elem.draw();
-            darkBlocks[i].draw();
-            if (elem.pulsing === false) {
-                // elem.trigger();
+            if (shouldPulse === true) {
+                elem.trigger();
             }
         }
+
+        // Stop triggering once you've triggered it once
+        if (shouldPulse === true) {
+            shouldPulse = false;
+        }
+
+        // If the last block in the array is not pulsing, and it hasn't just finished pulsing, make it pulse
+        if (elem.pulsing === false && justFlipped === true) {
+            shouldPulse = true;
+            justFlipped = false;
+        }
+        else if (elem.pulsing === false && justFlipped === false) {
+            lightMode = !lightMode;
+            justFlipped = true;
+        }
+
         setTimeout(loop, 100/6);
     };
     init();
