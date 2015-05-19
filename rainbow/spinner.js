@@ -39,7 +39,7 @@
         centerY = canvas.height / 2;
 
         for (var i = 0; i < colors.length; i++) {
-            arcs.push(makeArc(30 + i * 20, colors[i], 5 + Math.random() * 10));
+            arcs.push(makeArc(30 + i * 20, colors[i], 5 + Math.random() * 5));
         }
     };
 
@@ -49,7 +49,7 @@
         for (var i = 0; i < arcs.length; i++) {
             arcs[i].draw();
         }
-        setTimeout(loop, 100/3);
+        setTimeout(loop, 100/6);
     };
     init();
     loop();
