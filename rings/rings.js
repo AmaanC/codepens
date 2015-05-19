@@ -6,13 +6,16 @@
     var centerY = 200;
     var colors = ['#81c640', '#00a496', '#1576bd', '#622f8e', '#c22286', '#ea235e', '#ed5b36', '#f7b532'];
     var WIDTH = 30;
+    var LINE_WIDTH = 25;
+    var NUM_CIRCLES = 5;
+    var patterns = [];
+    var pattern;
 
     var drawArc = function(x, y, radius) {
         ctx.beginPath();
-        ctx.lineWidth = 20;
+        ctx.lineWidth = LINE_WIDTH;
         ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-        ctx.stroke();
-        ctx.closePath();
+        ctx.clip();
     };
 
     var drawPattern = function(displacement, rotation) {
@@ -32,15 +35,34 @@
     var createObj = function() {
         var obj = {};
         obj.displacement = Math.random() * 30;
-        obj.rotation = Math.random() * 2 * Math.PI;
+        obj.rotation = 0;
+        obj.theta = Math.random() * 1/2 * Math.PI;
+        obj.step = function() {
+            obj.displacement += Math.random() * 5 * Math.sin(obj.theta);
+            obj.rotation = Math.sin(obj.theta);
+            obj.theta += Math.PI / 180;
+        };
+        return obj;
     };
 
-    var x = 0;
+    var init = function() {
+        for (var i = 0; i < NUM_CIRCLES; i++) {
+            patterns.push(createObj());
+        }
+    };
+
     var loop = function() {
-        x += Math.PI / 180;
-        drawPattern(0, x * Math.PI);
+        for (var i = patterns.length - 1; i >= 0; i--) {
+            ctx.save();
+            pattern = patterns[i];
+            drawArc(centerX, centerY, 50 + i * 2 * LINE_WIDTH);
+            drawPattern(pattern.displacement, pattern.rotation);
+            pattern.step();
+            ctx.restore();
+        }
 
         setTimeout(loop, 100/6);
     };
+    init();
     loop();
 })();
