@@ -44,6 +44,7 @@
     };
 
     var loop = function() {
+        // Add a motion blur
         ctx.fillStyle = 'rgba(38, 38, 38, 0.5)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < arcs.length; i++) {
