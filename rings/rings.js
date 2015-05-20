@@ -8,18 +8,16 @@
     var revColors = colors.reverse();
     var WIDTH = 30;
     var LINE_WIDTH = 25;
-    var NUM_CIRCLES = 5;
+    var NUM_CIRCLES = 8;
     var patterns = [];
     var pattern;
     var data = {};
     data.mode = 0;
     var fns = [
-        function(x) { return x / 5; },
         function(x) { return 0; },
+        function(x) { return x / 5; },
         Math.tan,
         Math.floor,
-        Math.sin,
-        Math.cos,
         Math.atan
     ];
 
@@ -87,6 +85,7 @@
     window.onload = function() {
         var gui = new dat.GUI();
         gui.add(data, 'mode', Object.keys(fns));
+        document.querySelector('.c').children[0].focus();
     };
 
     init();
