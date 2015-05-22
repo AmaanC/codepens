@@ -24,18 +24,23 @@
        'I like your smile': '#B3CC57,#ECF081,#FFBE40',
        'Avilluk': '#23192D,#F57576,#FD0A54,#FEBF97,#F5ECB7',
        'Rhubarb Pie': '#BF496A,#B39C82,#B8C99D,#F0D399,#595151',
-       'Rainbow': '#BF0C43,#F9BA15,#8EAC00,#127A97,#452B72',
-       'Random from Colourlovers.com': 'random'
+       'Rainbow': '#BF0C43,#F9BA15,#8EAC00,#127A97,#452B72'
     };
 
     var getRandomColor = function() {
-        var xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', function(response) {
-            data.colors = JSON.parse(response)[0].colors.join();
-            init();
+        var script = document.createElement('script');
+        script.src = 'http://www.colourlovers.com/api/palettes/random?format=json&jsonCallback=assignRandom';
+        document.body.appendChild(script);
+    };
+
+    window.assignRandom = function(response) {
+        var hexArray = response[0].colors.map(function(elem) {
+            return '#' + elem;
         });
-        xhr.open('GET', 'http://www.colourlovers.com/api/palettes/random?format=json', true);
-        xhr.send();
+        data.colors = hexArray.join();
+
+        init();
+        console.log('Got random colors: ', hexArray);
     };
 
     // t = current time
@@ -103,10 +108,6 @@
 
     var init = function() {
         hexagons = [];
-        if (data.colors === 'random') {
-            getRandomColor();
-            return;
-        }
         var colors = data.colors.split(',');
         for (var i = numHex - 1; i >= 0; i--) {
             hexagons.push(createHex(centerX, centerY, minSize + i * distBetween, colors[i % colors.length], -2 * i));
@@ -124,7 +125,7 @@
 
     var data = {};
     data.colors = colorList['Original'];
-    data.reload = init;
+    data.random = getRandomColor;
 
     init();
     loop();
@@ -133,7 +134,7 @@
     window.onload = function() {
         var gui = new dat.GUI();
         var colorPicker = gui.add(data, 'colors', colorList);
-        gui.add(data, 'reload');
+        gui.add(data, 'random');
 
         colorPicker.onChange(function() {
             init();
