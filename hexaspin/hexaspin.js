@@ -8,7 +8,6 @@
     canvas.height = window.innerHeight;
 
     var hexagons = [];
-    // var colors = [];
     var data = {}; // Used for dat.GUI
     var centerX = canvas.width / 2;
     var centerY = canvas.height / 2;
@@ -25,7 +24,18 @@
        'I like your smile': '#B3CC57,#ECF081,#FFBE40',
        'Avilluk': '#23192D,#F57576,#FD0A54,#FEBF97,#F5ECB7',
        'Rhubarb Pie': '#BF496A,#B39C82,#B8C99D,#F0D399,#595151',
-       'Rainbow': '#BF0C43,#F9BA15,#8EAC00,#127A97,#452B72'
+       'Rainbow': '#BF0C43,#F9BA15,#8EAC00,#127A97,#452B72',
+       'Random from Colourlovers.com': 'random'
+    };
+
+    var getRandomColor = function() {
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', function(response) {
+            data.colors = JSON.parse(response)[0].colors.join();
+            init();
+        });
+        xhr.open('GET', 'http://www.colourlovers.com/api/palettes/random?format=json');
+        xhr.send();
     };
 
     // t = current time
@@ -93,6 +103,10 @@
 
     var init = function() {
         hexagons = [];
+        if (data.colors === 'random') {
+            getRandomColor();
+            return;
+        }
         var colors = data.colors.split(',');
         for (var i = numHex - 1; i >= 0; i--) {
             hexagons.push(createHex(centerX, centerY, minSize + i * distBetween, colors[i % colors.length], -2 * i));
