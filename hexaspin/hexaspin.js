@@ -34,7 +34,7 @@
             data.colors = JSON.parse(response)[0].colors.join();
             init();
         });
-        xhr.open('GET', 'http://www.colourlovers.com/api/palettes/random?format=json');
+        xhr.open('GET', 'http://www.colourlovers.com/api/palettes/random?format=json', true);
         xhr.send();
     };
 
