@@ -23,8 +23,8 @@
         obj.draw = function() {
             obj.ticks++;
             obj.height = canvas.height * easeFn(obj.angle);
-            obj.angle += Math.PI / 180;
-            obj.angle = obj.angle % Math.PI;
+            obj.angle += Math.PI / 90;
+            obj.angle = obj.angle % (2 * Math.PI);
             if (obj.angle.toFixed(2) !== 0) {
                 ctx.fillStyle = obj.color;
                 ctx.fillRect(x, canvas.height - obj.height, LINE_WIDTH, obj.height);
@@ -38,7 +38,7 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         for (var i = 0; i < numLines; i++) {
-            lines.push(createLine(i * LINE_WIDTH, Math.PI * i / numLines, colors[i % colors.length]));
+            lines.push(createLine(i * LINE_WIDTH, 2 * i / numLines, colors[i % colors.length]));
         };
     };
 

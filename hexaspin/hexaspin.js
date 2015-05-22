@@ -5,7 +5,8 @@
     var ctx = canvas.getContext('2d');
     
     var hexagons = [];
-    var colors = ['#81c640', '#00a496', '#1576bd', '#622f8e', '#c22286', '#ea235e', '#ed5b36', '#f7b532'];
+    // var colors = ['#81c640', '#00a496', '#1576bd', '#622f8e', '#c22286', '#ea235e', '#ed5b36', '#f7b532'];
+    var colors = ['#dcdcd2', '#262626'];
     var centerX = 250;
     var centerY = 250;
     var numHex = 20;
@@ -42,7 +43,7 @@
         ctx.fill();
     };
 
-    var duration = 90 / 3;
+    var duration = 90 / 2;
     var createHex = function(x, y, side, color, tick) {
         var obj = {};
         obj.x = x;
@@ -64,7 +65,7 @@
                     obj.spinning = false;
                 }
             }
-            else if (obj.ticks > 100) {
+            else if (obj.ticks > 50) {
                 // console.log('Spin!');
                 obj.spinning = true;
                 obj.ticks = 0;
