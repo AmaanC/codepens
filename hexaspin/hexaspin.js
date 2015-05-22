@@ -1,4 +1,4 @@
-// Recreation of this GIF: http://33.media.tumblr.com/95c5f652c652f154cf5578482012474a/tumblr_nj5wbzJQ5A1tcuj64o1_400.gif
+// Recreation of this GIF: https://i.imgur.com/iQU8Suj.gif
 
 (function() {
     var canvas = document.getElementById('canvas');
