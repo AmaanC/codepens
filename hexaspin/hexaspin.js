@@ -4,19 +4,35 @@
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
     
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
     var hexagons = [];
-    // var colors = ['#81c640', '#00a496', '#1576bd', '#622f8e', '#c22286', '#ea235e', '#ed5b36', '#f7b532'];
-    window.colors = ['#dcdcd2', '#262626'];
-    var centerX = 250;
-    var centerY = 250;
-    var numHex = 20;
+    // var colors = [];
+    var data = {}; // Used for dat.GUI
+    var centerX = canvas.width / 2;
+    var centerY = canvas.height / 2;
+    var numHex = 30;
     var minSize = 20;
     var distBetween = 20;
+    var waitPeriod = 100; // How long it waits before spinning again. Measured in ticks
+
+    // dat.GUI can't handle arrays, so we're just delimiting a list of colors with commas
+    var colorList = {
+       'Original': '#dcdcd2,#262626',
+       'Blue Chocolate': '#30261C,#403831,#36544F,#1F5F61,#0B8185',
+       'Earth Warrior': '#395A4F,#853C43,#FFA566',
+       'I like your smile': '#B3CC57,#ECF081,#FFBE40',
+       'Avilluk': '#23192D,#F57576,#FD0A54,#FEBF97,#F5ECB7',
+       'Rhubarb Pie': '#BF496A,#B39C82,#B8C99D,#F0D399,#595151',
+       'Rainbow': '#BF0C43,#F9BA15,#8EAC00,#127A97,#452B72'
+    };
 
     // t = current time
     // b = start value
     // c = change in value
     // d = duration
+    // Taken from http://gizma.com/easing/
     var easeInOutCirc = function (t, b, c, d) {
         t /= d/2;
         if (t < 1) return -c/2 * (Math.sqrt(1 - t*t) - 1) + b;
@@ -65,7 +81,7 @@
                     obj.spinning = false;
                 }
             }
-            else if (obj.ticks > 50) {
+            else if (obj.ticks > waitPeriod) {
                 // console.log('Spin!');
                 obj.spinning = true;
                 obj.ticks = 0;
@@ -75,7 +91,9 @@
         return obj;
     };
 
-    window.init = function() {
+    var init = function() {
+        hexagons = [];
+        var colors = data.colors.split(',');
         for (var i = numHex - 1; i >= 0; i--) {
             hexagons.push(createHex(centerX, centerY, minSize + i * distBetween, colors[i % colors.length], -2 * i));
         };
@@ -90,6 +108,23 @@
         requestAnimationFrame(loop);
     };
 
+    var data = {};
+    data.colors = colorList['Original'];
+    data.reload = init;
+
     init();
     loop();
+
+
+    window.onload = function() {
+        var gui = new dat.GUI();
+        var colorPicker = gui.add(data, 'colors', colorList);
+        gui.add(data, 'reload');
+
+        colorPicker.onChange(function() {
+            init();
+        });
+        document.querySelector('.c').children[0].focus();
+    };
+
 })();
