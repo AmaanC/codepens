@@ -6,7 +6,7 @@
     
     var hexagons = [];
     // var colors = ['#81c640', '#00a496', '#1576bd', '#622f8e', '#c22286', '#ea235e', '#ed5b36', '#f7b532'];
-    var colors = ['#dcdcd2', '#262626'];
+    window.colors = ['#dcdcd2', '#262626'];
     var centerX = 250;
     var centerY = 250;
     var numHex = 20;
@@ -75,7 +75,7 @@
         return obj;
     };
 
-    var init = function() {
+    window.init = function() {
         for (var i = numHex - 1; i >= 0; i--) {
             hexagons.push(createHex(centerX, centerY, minSize + i * distBetween, colors[i % colors.length], -2 * i));
         };
