@@ -115,7 +115,7 @@
     };
 
     var loop = function() {
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#262626';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < hexagons.length; i++) {
             hexagons[i].draw();
@@ -132,16 +132,16 @@
 
     window.onload = function() {
         var gui = new dat.GUI();
-        var needRefreshing = [];
-        needRefreshing.push(gui.add(data, 'colors', colorList));
-        needRefreshing.push(gui.add(data, 'numHex'));
-        needRefreshing.push(gui.add(data, 'minSize'));
-        needRefreshing.push(gui.add(data, 'distBetween'));
+        var needsRefreshing = []; // The gui elements that need to re-init things
+        needsRefreshing.push(gui.add(data, 'colors', colorList));
+        needsRefreshing.push(gui.add(data, 'numHex'));
+        needsRefreshing.push(gui.add(data, 'minSize'));
+        needsRefreshing.push(gui.add(data, 'distBetween'));
         gui.add(data, 'waitPeriod');
         gui.add(data, 'randomColor');
 
-        for (var i = 0; i < needRefreshing.length; i++) {
-            needRefreshing[i].onChange(init);
+        for (var i = 0; i < needsRefreshing.length; i++) {
+            needsRefreshing[i].onChange(init);
         };
         document.querySelector('.c').children[0].focus();
     };
