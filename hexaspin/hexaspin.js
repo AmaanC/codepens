@@ -11,10 +11,10 @@
     var data = {}; // Used for dat.GUI
     var centerX = canvas.width / 2;
     var centerY = canvas.height / 2;
-    var numHex = 30;
-    var minSize = 20;
-    var distBetween = 20;
-    var waitPeriod = 100; // How long it waits before spinning again. Measured in ticks
+    data.numHex = 30;
+    data.minSize = 20;
+    data.distBetween = 20;
+    data.waitPeriod = 100; // How long it waits before spinning again. Measured in ticks
 
     // dat.GUI can't handle arrays, so we're just delimiting a list of colors with commas
     var colorList = {
@@ -96,7 +96,7 @@
                     obj.spinning = false;
                 }
             }
-            else if (obj.ticks > waitPeriod) {
+            else if (obj.ticks > data.waitPeriod) {
                 // console.log('Spin!');
                 obj.spinning = true;
                 obj.ticks = 0;
@@ -109,8 +109,8 @@
     var init = function() {
         hexagons = [];
         var colors = data.colors.split(',');
-        for (var i = numHex - 1; i >= 0; i--) {
-            hexagons.push(createHex(centerX, centerY, minSize + i * distBetween, colors[i % colors.length], -2 * i));
+        for (var i = data.numHex - 1; i >= 0; i--) {
+            hexagons.push(createHex(centerX, centerY, data.minSize + i * data.distBetween, colors[i % colors.length], -2 * i));
         };
     };
 
@@ -123,9 +123,8 @@
         requestAnimationFrame(loop);
     };
 
-    var data = {};
     data.colors = colorList['Original'];
-    data.random = getRandomColor;
+    data.randomColor = getRandomColor;
 
     init();
     loop();
@@ -133,12 +132,17 @@
 
     window.onload = function() {
         var gui = new dat.GUI();
-        var colorPicker = gui.add(data, 'colors', colorList);
-        gui.add(data, 'random');
+        var needRefreshing = [];
+        needRefreshing.push(gui.add(data, 'colors', colorList));
+        needRefreshing.push(gui.add(data, 'numHex'));
+        needRefreshing.push(gui.add(data, 'minSize'));
+        needRefreshing.push(gui.add(data, 'distBetween'));
+        gui.add(data, 'waitPeriod');
+        gui.add(data, 'randomColor');
 
-        colorPicker.onChange(function() {
-            init();
-        });
+        for (var i = 0; i < needRefreshing.length; i++) {
+            needRefreshing[i].onChange(init);
+        };
         document.querySelector('.c').children[0].focus();
     };
 
