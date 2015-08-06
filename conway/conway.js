@@ -18,7 +18,7 @@
 
     var ALIVE_COLOR = '#4E8EE4';
     var DEAD_COLOR = '#CCCCCC';
-    var INSTRUMENT = 'acoustic_guitar_nylon';
+    var INSTRUMENT = 'whistle'; // synth_drum, synth_choir, synth_brass_1, taiko_drum, violin, voice_oohs, whistle
 
     var MAX_TICKS = 20; // Number of ticks to wait between steps
     var ticks = 0;
