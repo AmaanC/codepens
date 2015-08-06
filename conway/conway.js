@@ -19,7 +19,7 @@
     var ALIVE_COLOR = '#4E8EE4';
     var DEAD_COLOR = '#CCCCCC';
 
-    var MAX_TICKS = 10; // Number of ticks to wait between steps
+    var MAX_TICKS = 20; // Number of ticks to wait between steps
     var ticks = 0;
     
     // canvas.width = window.innerWidth;
@@ -53,8 +53,6 @@
                 var velocity = 127; // how hard the note hits
                 // play the note
                 MIDI.setVolume(0, 127);
-                MIDI.noteOn(0, note, velocity, delay);
-                MIDI.noteOff(0, note, delay + 0.75);
             }
         });
     };
@@ -87,13 +85,13 @@
     };
 
     var birth = function(row, column, neighbours) {
-        if (BORN_PARAMS.indexOf(neighbours) != -1) {
+        if (BORN_PARAMS.indexOf(neighbours) != -1 && grid[row][column] !== 1) {
             changes[row + ',' + column] = 1;
         }
     };
 
     var kill = function(row, column, neighbours) {
-        if (STAY_PARAMS.indexOf(neighbours) == -1) {
+        if (STAY_PARAMS.indexOf(neighbours) == -1 && grid[row][column] !== 0) {
             changes[row + ',' + column] = 0;
         }
     };
@@ -116,10 +114,19 @@
         for (var key in changes) {
             if (changes.hasOwnProperty(key)) {
                 nums = key.split(',');
-                row = nums[0];
-                column = nums[1];
+                row = Number(nums[0]);
+                column = Number(nums[1]);
 
                 grid[row][column] = changes[key];
+                if ((row + column) % 2 === 0) {
+                    var noise = Math.floor(Math.random() * 60);
+                    var note = 40 + ((row + column + noise) % 60);
+                    var velocity = 20 + Math.random() * 80;
+                    MIDI.noteOn(0, note, velocity, 0);
+                    MIDI.noteOff(0, note, 0.3);
+                }
+                // MIDI.noteOn(0, 25, 100, 0);
+                // MIDI.noteOff(0, 25, 0.1);
             }
         }
         changes = {};
