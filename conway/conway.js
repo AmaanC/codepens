@@ -18,6 +18,7 @@
 
     var ALIVE_COLOR = '#4E8EE4';
     var DEAD_COLOR = '#CCCCCC';
+    var INSTRUMENT = 'acoustic_guitar_nylon';
 
     var MAX_TICKS = 20; // Number of ticks to wait between steps
     var ticks = 0;
@@ -42,8 +43,8 @@
             }
         }
         MIDI.loadPlugin({
-            soundfontUrl: "./soundfont/",
-            instrument: "acoustic_grand_piano",
+            soundfontUrl: "https://rawgit.com/gleitz/midi-js-soundfonts/master/FluidR3_GM/",
+            instrument: INSTRUMENT,
             onprogress: function(state, progress) {
                 console.log(state, progress);
             },
@@ -51,8 +52,8 @@
                 var delay = 0; // play one note every quarter second
                 var note = 50; // the MIDI note
                 var velocity = 127; // how hard the note hits
-                // play the note
-                MIDI.setVolume(0, 127);
+                
+                MIDI.programChange(0, MIDI.GM.byName[INSTRUMENT].number);
             }
         });
     };
@@ -118,10 +119,10 @@
                 column = Number(nums[1]);
 
                 grid[row][column] = changes[key];
-                if ((row + column) % 2 === 0) {
-                    var noise = Math.floor(Math.random() * 60);
+                if ((row + column) % 5 === 0) {
+                    var noise = Math.floor(Math.random() * 20);
                     var note = 40 + ((row + column + noise) % 60);
-                    var velocity = 20 + Math.random() * 80;
+                    var velocity = 20 + Math.random() * 50;
                     MIDI.noteOn(0, note, velocity, 0);
                     MIDI.noteOff(0, note, 0.3);
                 }
