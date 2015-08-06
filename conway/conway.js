@@ -7,10 +7,12 @@
 (function () {
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     var BLOCK_SIZE = 15;
-    var ROWS = 30;
-    var COLUMNS = 30;
+    var ROWS = Math.ceil(canvas.width / BLOCK_SIZE);
+    var COLUMNS = Math.ceil(canvas.height / BLOCK_SIZE);
 
     // Using the convention B3/S23, which means birth if 3 neighbours, stay if 2 or 3 neighbours, kill otherwise
     var BORN_PARAMS = [3];
@@ -23,8 +25,6 @@
     var MAX_TICKS = 20; // Number of ticks to wait between steps
     var ticks = 0;
     
-    // canvas.width = window.innerWidth;
-    // canvas.height = window.innerHeight;
 
     var playing = false;
     var mouseDown = false;
