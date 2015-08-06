@@ -9,8 +9,8 @@
     var ctx = canvas.getContext('2d');
 
     var BLOCK_SIZE = 15;
-    var ROWS = 10;
-    var COLUMNS = 10;
+    var ROWS = 30;
+    var COLUMNS = 30;
 
     // Using the convention B3/S23, which means birth if 3 neighbours, stay if 2 or 3 neighbours, kill otherwise
     var BORN_PARAMS = [3];
@@ -61,7 +61,6 @@
                 }
 
                 if (currentRow in grid && currentColumn in grid[currentRow] && !(currentRow == row && currentColumn == column)) {
-                    console.log('a');
                     neighbours.push(grid[currentRow][currentColumn]);
                 }
             }
@@ -137,7 +136,6 @@
     };
 
     var handleKey = function(e) {
-        console.log(e.keyCode);
         if (e.keyCode === 32) {
             playing = !playing;
         }
@@ -163,7 +161,7 @@
         mouseDown = false;
     }, false);
     document.body.addEventListener('keydown', handleKey, false);
+
     init();
     loop();
-
 })();
