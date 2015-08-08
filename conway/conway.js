@@ -20,7 +20,9 @@
 
     var ALIVE_COLOR = '#4E8EE4';
     var DEAD_COLOR = '#CCCCCC';
-    var INSTRUMENT = 'whistle'; // synth_drum, synth_choir, synth_brass_1, taiko_drum, violin, voice_oohs, whistle
+    var INSTRUMENT = 'acoustic_grand_piano'; // synth_drum, synth_choir, synth_brass_1, taiko_drum, violin, voice_oohs, whistle
+
+    var scale = ['C3', 'D4', 'E5', 'F6', 'G7', 'A1', 'B2'];
 
     var MAX_TICKS = 20; // Number of ticks to wait between steps
     var ticks = 0;
@@ -119,9 +121,9 @@
                 column = Number(nums[1]);
 
                 grid[row][column] = changes[key];
-                if ((row + column) % 5 === 0) {
+                if (Math.random() > 0.95) {
                     var noise = Math.floor(Math.random() * 20);
-                    var note = 40 + ((row + column + noise) % 60);
+                    var note = MIDI.keyToNote[scale[(row + column + noise) % scale.length]];
                     var velocity = 20 + Math.random() * 50;
                     MIDI.noteOn(0, note, velocity, 0);
                     MIDI.noteOff(0, note, 0.3);
