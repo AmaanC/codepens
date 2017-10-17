@@ -45,7 +45,7 @@
             }
         }
         MIDI.loadPlugin({
-            soundfontUrl: "https://rawgit.com/gleitz/midi-js-soundfonts/master/FluidR3_GM/",
+            soundfontUrl: "https://rawgit.com/gleitz/midi-js-soundfonts/gh-pages/FluidR3_GM/",
             instrument: INSTRUMENT,
             onprogress: function(state, progress) {
                 console.log(state, progress);
